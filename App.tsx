@@ -1,14 +1,23 @@
-import {View, Text} from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import React, {useState} from 'react';
 
 import * as Yup from 'yup';
+import {Formik} from 'formik';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
 // another way to import
 // import { object, string, number, date, InferType } from 'yup';
 
 const passwordSchema = Yup.object().shape({
   passwordLength: Yup.number()
-    .min(4, 'Length cannot be less than 4 characters')
+    .min(8, 'Length cannot be less than 8 characters')
     .max(32, 'max password length is 32')
     .required('password length is a required field'),
 });
@@ -67,9 +76,107 @@ const App = () => {
   };
 
   return (
-    <View>
-      <Text>App</Text>
-    </View>
+    <ScrollView keyboardShouldPersistTaps="handled">
+      <SafeAreaView>
+        <View>
+          <Text>Password Generat-inator</Text>
+          <Formik
+            initialValues={{passwordLength: ''}}
+            validationSchema={passwordSchema}
+            onSubmit={values => {
+              console.log(values);
+              passwordStringGenerator(Number(values.passwordLength));
+            }}>
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              isValid,
+              handleReset,
+              handleSubmit,
+              isSubmitting,
+            }) => (
+              <>
+                <View>
+                  <View>
+                    <Text>Enter password length</Text>
+                    {touched.passwordLength && errors.passwordLength && (
+                      <Text>{errors.passwordLength}</Text>
+                    )}
+                    <TextInput
+                      value={values.passwordLength}
+                      onChangeText={handleChange('passwordLength')}
+                      placeholder="Ex:12"
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+
+                <View>
+                  <Text>Include Lowercase</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={lowercase}
+                    onPress={() => setLowercase(!lowercase)}
+                    fillColor="#29AB87"
+                  />
+                </View>
+
+                <View>
+                  <Text>Include Uppercase</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={uppercase}
+                    onPress={() => setUppercase(!uppercase)}
+                    fillColor="#29AB87"
+                  />
+                </View>
+
+                <View>
+                  <Text>Include Numbers</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={useNumbers}
+                    onPress={() => setUseNumbers(!useNumbers)}
+                    fillColor="#29AB87"
+                  />
+                </View>
+                <View>
+                  <Text>Include Special Characters</Text>
+                  <BouncyCheckbox
+                    disableBuiltInState
+                    isChecked={specialChars}
+                    onPress={() => setSpecialChars(!specialChars)}
+                    fillColor="#29AB87"
+                  />
+                </View>
+
+                <View>
+                  <TouchableOpacity
+                    disabled={!isValid}
+                    onPress={() => handleSubmit()}>
+                    <Text>Generate</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleReset();
+                      clearState();
+                    }}>
+                    <Text>Reset</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </Formik>
+        </View>
+        {isPasswordGenerated ? (
+          <View>
+            <Text>{password}</Text>
+          </View>
+        ) : null}
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
