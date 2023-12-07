@@ -8,8 +8,6 @@ export const styles = StyleSheet.create({
     padding: 15,
   },
   passLengthWrapper: {
-    // borderColor: 'red',
-    // borderWidth: 2,
     position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
@@ -32,7 +30,6 @@ export const styles = StyleSheet.create({
   passLengthError: {
     paddingLeft: 10,
     paddingBottom: 4,
-    // position: 'absolute',
     color: 'tomato',
   },
   optionsWrapper: {
@@ -95,10 +92,7 @@ export const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    // fontSize: 30,
     padding: 0,
     margin: 0,
-  },
-  copyIcon: {
   },
 });

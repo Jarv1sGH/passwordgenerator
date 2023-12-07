@@ -27,7 +27,6 @@ const passwordSchema = Yup.object().shape({
 
 const App = () => {
   const [password, setPassword] = useState<string>('');
-  const [noOptionsSelected, setNoOptionsSelected] = useState<boolean>(false);
   const [isPasswordGenerated, setIsPasswordGenerated] =
     useState<boolean>(false);
   const [lowercase, setLowercase] = useState<boolean>(true);
@@ -199,11 +198,7 @@ const App = () => {
                         style={styles.copyIconWrappper}
                         onPress={() => copyToClipboard(password)}>
                         <View>
-                          <FontAwesomeIcon
-                            size={22}
-                            style={styles.copyIcon}
-                            icon={faCopy}
-                          />
+                          <FontAwesomeIcon size={22} icon={faCopy} />
                         </View>
                       </TouchableOpacity>
                     </View>
