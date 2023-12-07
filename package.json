@@ -10,10 +10,16 @@
     "test": "jest"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-native-fontawesome": "^0.3.0",
+    "@react-native-clipboard/clipboard": "^1.12.1",
     "formik": "^2.4.5",
     "react": "18.2.0",
     "react-native": "0.72.7",
     "react-native-bouncy-checkbox": "^3.0.7",
+    "react-native-fontawesome": "^7.0.0",
+    "react-native-svg": "^14.1.0",
     "yup": "^1.3.2"
   },
   "devDependencies": {

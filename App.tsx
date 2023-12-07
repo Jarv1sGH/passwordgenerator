@@ -6,24 +6,28 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import React, {useState} from 'react';
-
-import * as Yup from 'yup';
+import Clipboard from '@react-native-clipboard/clipboard';
+import React, {useEffect, useState} from 'react';
 import {Formik} from 'formik';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faCopy} from '@fortawesome/free-solid-svg-icons';
+import {styles} from './Styles';
 
+import * as Yup from 'yup';
 // another way to import
 // import { object, string, number, date, InferType } from 'yup';
 
 const passwordSchema = Yup.object().shape({
   passwordLength: Yup.number()
-    .min(8, 'Length cannot be less than 8 characters')
+    .min(4, 'atleast 4 characters')
     .max(32, 'max password length is 32')
-    .required('password length is a required field'),
+    .required('password length is required '),
 });
 
 const App = () => {
-  const [password, setPassword] = useState<string>('second');
+  const [password, setPassword] = useState<string>('');
+  const [noOptionsSelected, setNoOptionsSelected] = useState<boolean>(false);
   const [isPasswordGenerated, setIsPasswordGenerated] =
     useState<boolean>(false);
   const [lowercase, setLowercase] = useState<boolean>(true);
@@ -74,17 +78,19 @@ const App = () => {
     setUseNumbers(false);
     setSpecialChars(false);
   };
+  const copyToClipboard = (str: string) => {
+    Clipboard.setString(str);
+  };
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
       <SafeAreaView>
-        <View>
-          <Text>Password Generat-inator</Text>
+        <View style={styles.appWrapper}>
+          <Text style={styles.titleText}>Password Generat-inator</Text>
           <Formik
             initialValues={{passwordLength: ''}}
             validationSchema={passwordSchema}
             onSubmit={values => {
-              console.log(values);
               passwordStringGenerator(Number(values.passwordLength));
             }}>
             {({
@@ -95,86 +101,139 @@ const App = () => {
               isValid,
               handleReset,
               handleSubmit,
-              isSubmitting,
             }) => (
               <>
                 <View>
-                  <View>
-                    <Text>Enter password length</Text>
-                    {touched.passwordLength && errors.passwordLength && (
-                      <Text>{errors.passwordLength}</Text>
-                    )}
+                  <View style={styles.passLengthWrapper}>
+                    <View>
+                      <Text style={styles.passLengthText}>
+                        Enter password length
+                      </Text>
+                      {touched.passwordLength && errors.passwordLength && (
+                        <Text style={[styles.passLengthError]}>
+                          {errors.passwordLength}
+                        </Text>
+                      )}
+                    </View>
                     <TextInput
+                      style={styles.passLengthInput}
                       value={values.passwordLength}
                       onChangeText={handleChange('passwordLength')}
-                      placeholder="Ex:12"
+                      placeholder="min:4"
                       keyboardType="numeric"
+                      maxLength={2}
                     />
                   </View>
                 </View>
 
-                <View>
-                  <Text>Include Lowercase</Text>
-                  <BouncyCheckbox
-                    disableBuiltInState
-                    isChecked={lowercase}
-                    onPress={() => setLowercase(!lowercase)}
-                    fillColor="#29AB87"
-                  />
-                </View>
+                <View style={styles.optionsWrapper}>
+                  <View style={[styles.passLengthWrapper]}>
+                    <Text style={[styles.passLengthText]}>
+                      Include Lowercase
+                    </Text>
+                    <BouncyCheckbox
+                      style={styles.checkBox}
+                      disableBuiltInState
+                      isChecked={lowercase}
+                      onPress={() => {
+                        if (uppercase || useNumbers || specialChars) {
+                          setLowercase(!lowercase);
+                        }
+                      }}
+                      fillColor="#29AB87"
+                    />
+                  </View>
 
-                <View>
-                  <Text>Include Uppercase</Text>
-                  <BouncyCheckbox
-                    disableBuiltInState
-                    isChecked={uppercase}
-                    onPress={() => setUppercase(!uppercase)}
-                    fillColor="#29AB87"
-                  />
-                </View>
+                  <View style={[styles.passLengthWrapper]}>
+                    <Text style={[styles.passLengthText]}>
+                      Include Uppercase
+                    </Text>
+                    <BouncyCheckbox
+                      style={styles.checkBox}
+                      disableBuiltInState
+                      isChecked={uppercase}
+                      onPress={() => {
+                        if (lowercase || useNumbers || specialChars) {
+                          setUppercase(!uppercase);
+                        }
+                      }}
+                      fillColor="#29AB87"
+                    />
+                  </View>
 
-                <View>
-                  <Text>Include Numbers</Text>
-                  <BouncyCheckbox
-                    disableBuiltInState
-                    isChecked={useNumbers}
-                    onPress={() => setUseNumbers(!useNumbers)}
-                    fillColor="#29AB87"
-                  />
-                </View>
-                <View>
-                  <Text>Include Special Characters</Text>
-                  <BouncyCheckbox
-                    disableBuiltInState
-                    isChecked={specialChars}
-                    onPress={() => setSpecialChars(!specialChars)}
-                    fillColor="#29AB87"
-                  />
-                </View>
+                  <View style={[styles.passLengthWrapper]}>
+                    <Text style={[styles.passLengthText]}>Include Numbers</Text>
+                    <BouncyCheckbox
+                      style={styles.checkBox}
+                      disableBuiltInState
+                      isChecked={useNumbers}
+                      onPress={() => {
+                        if (lowercase || uppercase || specialChars) {
+                          setUseNumbers(!useNumbers);
+                        }
+                      }}
+                      fillColor="#29AB87"
+                    />
+                  </View>
+                  <View style={[styles.passLengthWrapper]}>
+                    <Text style={[styles.passLengthText]}>
+                      Include Special Characters
+                    </Text>
+                    <BouncyCheckbox
+                      style={styles.checkBox}
+                      disableBuiltInState
+                      isChecked={specialChars}
+                      onPress={() => {
+                        if (lowercase || uppercase || useNumbers) {
+                          setSpecialChars(!specialChars);
+                        }
+                      }}
+                      fillColor="#29AB87"
+                    />
+                  </View>
 
-                <View>
-                  <TouchableOpacity
-                    disabled={!isValid}
-                    onPress={() => handleSubmit()}>
-                    <Text>Generate</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleReset();
-                      clearState();
-                    }}>
-                    <Text>Reset</Text>
-                  </TouchableOpacity>
+                  {isPasswordGenerated ? (
+                    <View style={styles.passwordBox}>
+                      <Text style={styles.passwordBoxText}>{password}</Text>
+                      <TouchableOpacity
+                        style={styles.copyIconWrappper}
+                        onPress={() => copyToClipboard(password)}>
+                        <View>
+                          <FontAwesomeIcon
+                            size={22}
+                            style={styles.copyIcon}
+                            icon={faCopy}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ) : null}
+
+                  <View style={styles.btnContainer}>
+                    <TouchableOpacity
+                      disabled={!isValid}
+                      style={[
+                        styles.buttons,
+                        styles.generateBtn,
+                        !isValid ? styles.btnDisabled : null,
+                      ]}
+                      onPress={() => handleSubmit()}>
+                      <Text style={styles.btnText}>Generate</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.resetBtn, styles.buttons]}
+                      onPress={() => {
+                        handleReset();
+                        clearState();
+                      }}>
+                      <Text style={styles.btnText}>Reset</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </>
             )}
           </Formik>
         </View>
-        {isPasswordGenerated ? (
-          <View>
-            <Text>{password}</Text>
-          </View>
-        ) : null}
       </SafeAreaView>
     </ScrollView>
   );
