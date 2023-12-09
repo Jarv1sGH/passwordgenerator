@@ -7,7 +7,7 @@ import {
   TextInput,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Formik} from 'formik';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
